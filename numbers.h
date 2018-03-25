@@ -27,7 +27,7 @@ void drawScore(long score){
     // blit a number here...
     // This is a real-time string compare, for better or for worse...
 
-  /*
+    /*
     if(charBuf[i] == '0')  
       Sprites::drawOverwrite(50 + ((i + pad) * 4), 0, num0, 0);
     if(charBuf[i] == '1')  
@@ -48,7 +48,8 @@ void drawScore(long score){
       Sprites::drawOverwrite(50 + ((i + pad) * 4), 0, num8, 0);
     if(charBuf[i] == '9')  
       Sprites::drawOverwrite(50 + ((i + pad) * 4), 0, num9, 0);
-  */
+
+    */
   }
 }
 

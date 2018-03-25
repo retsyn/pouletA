@@ -3,6 +3,8 @@
 #ifndef POULET_H
 #define POULET_H
 
+#define ENT_MAX 10
+
 
 // Game constants:
 const float gravity = .2;
@@ -24,6 +26,8 @@ struct Game {
 
 // Structs here
 struct Entity {
+
+  int alive;
   
   int player;
   int lethal;

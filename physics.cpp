@@ -1,98 +1,97 @@
 #include "physics.h"
 
-void physicsUpdate (struct Entity *p){
+void physicsUpdate (struct Entity *e){
 
-  int i; // iterator to check
+  int i; // iterator to check spans of pixels
   bool blocked; // State if a wall is found during a check.
 
   // lock the velocity to the set walkspeed.
-  if(p->ax > 0){
-    if(p->ax > p->walkSpeed){
-      p->ax = p->walkSpeed; 
+  if(e->ax > 0){
+    if(e->ax > e->walkSpeed){
+      e->ax = e->walkSpeed; 
     }
   } else {  
-    if(p->ax < -p->walkSpeed){
-      p->ax = -p->walkSpeed; 
+    if(e->ax < -e->walkSpeed){
+      e->ax = -e->walkSpeed; 
     }
   }
 
   // Apply gravity:
-  p->ay += gravity;
-
+  e->ay += gravity;
 
   // Collision checks:
   // Right
   blocked = false;
-  if(p->ax > 0){
-    for(i = floor(p->x); i <= floor(p->x + p->ax); i++){
-      if((isSolid(i + 9, p->y)) || (isSolid(i + 9, floor(p->y + 7)))){
-        p->x = i;
+  if(e->ax > 0){
+    for(i = floor(e->x); i <= floor(e->x + e->ax); i++){
+      if((isSolid(i + 9, e->y)) || (isSolid(i + 9, floor(e->y + 7)))){
+        e->x = i;
         blocked = true;
-        p->ax = 0;
+        e->ax = 0;
         break;
       }
     }
-    if(!blocked) p->x += p->ax;
+    if(!blocked) e->x += e->ax;
   }
 
   // Left
   blocked = false;
-  if(p->ax < 0){
-    for(i = floor(p->x); i >= floor(p->x + p->ax); i--){
-      if((isSolid(i-1, p->y)) || (isSolid(i-1, floor(p->y + 7)))){
-        p->x = i;
+  if(e->ax < 0){
+    for(i = floor(e->x); i >= floor(e->x + e->ax); i--){
+      if((isSolid(i-1, e->y)) || (isSolid(i-1, floor(e->y + 7)))){
+        e->x = i;
         blocked = true;
-        p->ax = 0;
+        e->ax = 0;
         break;
       }
     }
-    if(!blocked) p->x += p->ax;
+    if(!blocked) e->x += e->ax;
   }
 
   // Down
   blocked = false;
-  if(p->ay > 0){
-    for(i = floor(p->y); i <= floor(p->y + p->ay); i++){
-      if((isSolid(p->x , i + 8)) || (isSolid(p->x + 8, i + 8))){
-        p->y = i;
+  if(e->ay > 0){
+    for(i = floor(e->y); i <= floor(e->y + e->ay); i++){
+      if((isSolid(e->x , i + 8)) || (isSolid(e->x + 8, i + 8))){
+        e->y = i;
         blocked = true;
-        p->grounded = true;
-        p->ay = 0;
+        e->grounded = true;
+        e->ay = 0;
         break;
       } else {
-        p->grounded = false;
+        e->grounded = false;
       }
     }
-    if(!blocked) p->y += p->ay;
+    if(!blocked) e->y += e->ay;
   }
 
   // Up
   blocked = false;
-  if(p->ay < 0){
-    for(i = floor(p->y); i >= floor(p->y + p->ay); i--){
-      if((isSolid(p->x, i-1)) || (isSolid(p->x + 8, i-1))){
-        p->y = i;
+  if(e->ay < 0){
+    for(i = floor(e->y); i >= floor(e->y + e->ay); i--){
+      if((isSolid(e->x, i-1)) || (isSolid(e->x + 8, i-1))){
+        e->y = i;
         blocked = true;
-        p->ay = -p->ay;
+        e->ay = -e->ay;
         break;
       }
     }
-    if(!blocked) p->y += p->ay;
+    if(!blocked) e->y += e->ay;
   }
 
 
   // Handle falling out of world:
-  if(p->y > 128) p->y = -8;
+  if(e->y > 128) e->y = -8;
 
   // Add friction:
-  if(p->ax > 0){
-    p->ax -= groundFriction;
+  if(e->ax > 0){
+    e->ax -= groundFriction;
   }
-  if(p->ax < 0){
-    p->ax += groundFriction;
+  if(e->ax < 0){
+    e->ax += groundFriction;
   }
-  if(abs(p->ax) < groundFriction){
-    p->ax = 0;
+  if(abs(e->ax) < groundFriction){
+    e->ax = 0;
   }
 }
 

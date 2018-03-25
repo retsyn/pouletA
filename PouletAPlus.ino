@@ -1,6 +1,10 @@
 #include <Arduboy2.h>
+#include <Tinyfont.h>
+#include <math.h>
+
 
 Arduboy2 arduboy;
+Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, Arduboy2::width(), Arduboy2::height());
 
 #include "poulet.h"
 #include "graphics.h"
@@ -9,6 +13,8 @@ Arduboy2 arduboy;
 #include "entity.h"
 #include "physics.h"
 #include "numbers.h"
+#include "sprite.h"
+
 
 
 // Forward declaration of essential types:
@@ -17,13 +23,7 @@ struct Game;
 
 Entity player;
 Game game;
-
-// later I'll init this as zero size
-Entity ents[4];
-
-
-// Init player
-
+Entity ents[10];
 
 
 void setup() {
@@ -32,6 +32,18 @@ void setup() {
   player.walkSpeed = 1;
   player.walkAccel = 0.1;
   player.animSpeed = 4;
+  player.image = poulet;
+
+  // Put a few test cats in
+
+  /*
+  create(1, 30, 10, ents); 
+  create(1, 40, 20, ents);
+  create(1, 50, 30, ents);
+  create(1, 60, 40, ents);
+  create(1, 70, 50, ents);
+  create(1, 80, 60, ents);
+  */
   
   game.mode = 1;
 
@@ -56,7 +68,7 @@ void loop() {
   arduboy.clear();
 
   if(game.mode == 0){
-    play(&player, &game);
+    play(&player, &game, ents);
   }
 
   if(game.mode == 1){
@@ -72,15 +84,18 @@ void loop() {
 
 
 void title(Game *g){
+  
   Sprites::drawOverwrite(0, -10, titlescreen, 0);
   arduboy.setCursor(40, 40);
   arduboy.print("Start");
   arduboy.setCursor(40, 48);
+  
   if(g->debug == false){
     arduboy.print("Debug: Off");
   } else {
     arduboy.print("Debug: On");
   }
+  
   arduboy.setCursor(40, 56);
   arduboy.print("Sound: Off");
 
@@ -97,7 +112,6 @@ void title(Game *g){
   arduboy.setCursor(30, (40 + (g->menuItem * 8)));
   arduboy.print(">");
   
-
   if(arduboy.justPressed(LEFT_BUTTON) || arduboy.justPressed(RIGHT_BUTTON)){
     if(g->menuItem == 1){
       if(g->debug){
@@ -111,7 +125,9 @@ void title(Game *g){
 }
 
 
-void play(Entity *p, Game *g){
+void play(Entity *p, Game *g, Entity *ents){
+
+  int i = 0;
 
   if (arduboy.pressed(LEFT_BUTTON)){
     p->ax -= p->walkAccel; 
@@ -125,15 +141,29 @@ void play(Entity *p, Game *g){
   }
   if (arduboy.justPressed(A_BUTTON)){
     // YOU WIN!
-    g->score += 1000;
+    g->score += 10;
+    create(1, p->x, p->y - 10, ents); 
+
   }
 
-  physicsUpdate(&player);
+  physicsUpdate(p);
+  for(i = 0; i < sizeof(ents); i++){
+    physicsUpdate(&ents[i]);
+  }
+  
   camera(&player, &game);
   if(game.debug) debug(&player, &game);
   drawLevel(0, 0, &game);
-  showHUD(&game);
+
   animation(p, g);
+  drawSprite(g, p);
+  
+  for(i = 0; i < ENT_MAX; i++){
+    animation (&ents[i], g);
+    drawSprite(g, &ents[i]);
+  }
+  
+  showHUD(g);
 
 }
 
@@ -152,7 +182,8 @@ void gameInit(Entity *p, Game *g){
 }
 
 
-void animation(Entity *p, Game *game){
+void animation(Entity *p, Game *g){
+  int i = 0;
 
   p->ticker += abs(p->ax);
   if(p->ticker >= p->animSpeed){
@@ -165,7 +196,6 @@ void animation(Entity *p, Game *game){
 
   if(p->ax > 0) p->flip = 0;
   if(p->ax < 0) p->flip = 8;
-
   if(p->ax == 0) p->frame = 0;
 
 
@@ -173,8 +203,6 @@ void animation(Entity *p, Game *game){
     if(p->ay <= 0) p->frame = 6;
     if(p->ay > 0) p->frame = 7;
   }
-
-  Sprites::drawPlusMask(p->x - game->camerax, p->y, poulet, p->frame + p->flip);
 
 }
 
@@ -193,19 +221,19 @@ void camera(Entity *p, Game *game){
 }
 
 
-void debug(Entity *p, Game *game){ 
-  arduboy.print("X: ");
-  arduboy.print(p->x);
-  arduboy.print("  Y: ");
-  arduboy.print(p->y);
-  arduboy.print("\nTX: ");
-  arduboy.print(floor(p->x / 8));
-  arduboy.print("  TY: ");
-  arduboy.print(floor(p->y / 8));
-  arduboy.print("\nAX: ");
-  arduboy.print(p->ax);
-  arduboy.print("  AY: ");
-  arduboy.print(p->ay);
+void debug(Entity *p, Game *g){ 
+
+  tinyfont.setCursor(1, 0);
+  tinyfont.print("Debug Mode");
+  tinyfont.setCursor(1, 5);
+  tinyfont.print("p.X:");  
+  tinyfont.print(int(p->x));
+  tinyfont.print(" p.Y:");  
+  tinyfont.print(int(p->y));
+  tinyfont.setCursor(1, 10);
+  tinyfont.print("Score: ");
+  tinyfont.print(g->score);
+
 }
 
 
