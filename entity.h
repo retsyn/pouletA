@@ -6,5 +6,4 @@
 void create(int type, float x, float y, struct Entity e[]);
 
 
-
 #endif

@@ -30,8 +30,8 @@ int isSolid(int x, int y){
 
   // return true if something is there.
   int i;
-  int tx = floor(x / 8);
-  int ty = floor(y / 8);
+  int tx = x / 8;
+  int ty = y / 8;
 
   // convert i to be the correct place on the 1 dimensional map.
   i = tx + (ty * 128);

@@ -18,7 +18,7 @@ void create(int type, float x, float y, struct Entity e[]){
 
   // Iterate through what's still alive and active to not overwrite anything...
   for(i = 0; i < ENT_MAX; i++){
-    if(e[i].alive = 0){
+    if(e[i].alive == 0){
       break;
     }
   }
@@ -29,7 +29,8 @@ void create(int type, float x, float y, struct Entity e[]){
   // Now we assign values to the new index.
   e[newIndex].x = x;
   e[newIndex].y = y;
-
+  e[newIndex].frame = 0;
+  
 
   // Catch default case:
   e[newIndex].image = cat;

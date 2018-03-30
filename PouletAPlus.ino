@@ -2,12 +2,12 @@
 #include <Tinyfont.h>
 #include <math.h>
 
-
 Arduboy2 arduboy;
 Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, Arduboy2::width(), Arduboy2::height());
 
 #include "poulet.h"
 #include "graphics.h"
+// #include "animation.h"
 #include "tilemap.h"
 #include "level.h"
 #include "entity.h"
@@ -16,14 +16,13 @@ Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, Arduboy2::width(), Arduboy2::heigh
 #include "sprite.h"
 
 
-
 // Forward declaration of essential types:
 struct Entity;
 struct Game;
 
 Entity player;
 Game game;
-Entity ents[10];
+Entity ents[ENT_MAX];
 
 
 void setup() {
@@ -33,18 +32,7 @@ void setup() {
   player.walkAccel = 0.1;
   player.animSpeed = 4;
   player.image = poulet;
-
-  // Put a few test cats in
-
-  /*
-  create(1, 30, 10, ents); 
-  create(1, 40, 20, ents);
-  create(1, 50, 30, ents);
-  create(1, 60, 40, ents);
-  create(1, 70, 50, ents);
-  create(1, 80, 60, ents);
-  */
-  
+ 
   game.mode = 1;
 
   // Arduboy housekeeping;
@@ -143,7 +131,6 @@ void play(Entity *p, Game *g, Entity *ents){
     // YOU WIN!
     g->score += 10;
     create(1, p->x, p->y - 10, ents); 
-
   }
 
   physicsUpdate(p);
@@ -155,11 +142,11 @@ void play(Entity *p, Game *g, Entity *ents){
   if(game.debug) debug(&player, &game);
   drawLevel(0, 0, &game);
 
-  animation(p, g);
+  // playerAnimation(p, g);
   drawSprite(g, p);
   
   for(i = 0; i < ENT_MAX; i++){
-    animation (&ents[i], g);
+    // enemyAnimation(&ents[i], g);
     drawSprite(g, &ents[i]);
   }
   
@@ -181,30 +168,6 @@ void gameInit(Entity *p, Game *g){
   
 }
 
-
-void animation(Entity *p, Game *g){
-  int i = 0;
-
-  p->ticker += abs(p->ax);
-  if(p->ticker >= p->animSpeed){
-    p->frame++;
-    p->ticker = 0;
-    if(p->frame > 3){
-      p->frame = 0;
-    }
-  }  
-
-  if(p->ax > 0) p->flip = 0;
-  if(p->ax < 0) p->flip = 8;
-  if(p->ax == 0) p->frame = 0;
-
-
-  if(p->grounded == false){
-    if(p->ay <= 0) p->frame = 6;
-    if(p->ay > 0) p->frame = 7;
-  }
-
-}
 
 
 void camera(Entity *p, Game *game){
