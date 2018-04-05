@@ -35,6 +35,15 @@ void playerAnimation(Entity *p, Game *g){
 void enemyAnimation(Entity *e, Game *g){
   int i = 0;
 
-  i++;
+  e->ticker += 0.5;
+
+  if(e->ticker >= e->animSpeed){
+    e->frame++;
+    e->ticker = 0;
+    if(e->frame > 1){
+      e->frame = 0;
+    }
+  }
+ 
 }
 

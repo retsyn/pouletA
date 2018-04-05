@@ -3,7 +3,8 @@
 #ifndef POULET_H
 #define POULET_H
 
-#define ENT_MAX 10
+#define ENT_MAX 6
+#define SPAWN_MAX 50
 
 
 // Game constants:
@@ -12,7 +13,7 @@ const float groundFriction = 0.03f;
 const float airFriction = 0.005f;
 const float pJumpPower = 3.5f;
 
-
+// Game state variables.
 struct Game {
   int mode;
 
@@ -24,7 +25,16 @@ struct Game {
 };
 
 
-// Structs here
+// Entity spawn points-- a lower memory way of storing where enemies will be.
+struct Spawn {
+  int x;
+  int y;
+  int kind;
+  int onscreen;
+};
+
+
+// Complete Entity Class
 struct Entity {
 
   int alive;

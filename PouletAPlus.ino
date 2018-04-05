@@ -7,7 +7,7 @@ Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, Arduboy2::width(), Arduboy2::heigh
 
 #include "poulet.h"
 #include "graphics.h"
-// #include "animation.h"
+#include "animation.h"
 #include "tilemap.h"
 #include "level.h"
 #include "entity.h"
@@ -20,9 +20,11 @@ Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, Arduboy2::width(), Arduboy2::heigh
 struct Entity;
 struct Game;
 
+
 Entity player;
 Game game;
 Entity ents[ENT_MAX];
+Spawn spawns[SPAWN_MAX];
 
 
 void setup() {
@@ -134,21 +136,26 @@ void play(Entity *p, Game *g, Entity *ents){
   }
 
   physicsUpdate(p);
-  for(i = 0; i < sizeof(ents); i++){
+  for(i = 0; i < ENT_MAX; i++){
     physicsUpdate(&ents[i]);
   }
   
   camera(&player, &game);
-  if(game.debug) debug(&player, &game);
   drawLevel(0, 0, &game);
 
-  // playerAnimation(p, g);
+  playerAnimation(p, g);
   drawSprite(g, p);
   
   for(i = 0; i < ENT_MAX; i++){
-    // enemyAnimation(&ents[i], g);
+    enemyAnimation(&ents[i], g);
     drawSprite(g, &ents[i]);
   }
+
+  for(i = 0; i < ENT_MAX; i++){
+    recycle(&ents[i], &game);
+  }
+
+  if(game.debug) debug(&player, &game, ents);
   
   showHUD(g);
 
@@ -160,14 +167,10 @@ void gameInit(Entity *p, Game *g){
   p->x = 20;
   p->y = 0;
 
-  if(arduboy.pressed(A_BUTTON) && arduboy.pressed(UP_BUTTON)){
-    g->debug = true;
-  }
-
+  // Start on title screen.
   g->mode = 1;
   
 }
-
 
 
 void camera(Entity *p, Game *game){
@@ -184,7 +187,8 @@ void camera(Entity *p, Game *game){
 }
 
 
-void debug(Entity *p, Game *g){ 
+void debug(Entity *p, Game *g, Entity e[]){ 
+  int i = 0;
 
   tinyfont.setCursor(1, 0);
   tinyfont.print("Debug Mode");
@@ -197,6 +201,12 @@ void debug(Entity *p, Game *g){
   tinyfont.print("Score: ");
   tinyfont.print(g->score);
 
+  tinyfont.setCursor(1,15);
+  tinyfont.print("Ents slots in use:");
+  for(i = 0; i <= ENT_MAX; i++){
+    tinyfont.setCursor(i * 8, 20);
+    tinyfont.print(e[i].alive);
+  }
 }
 
 
