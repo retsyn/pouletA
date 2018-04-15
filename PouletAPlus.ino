@@ -45,7 +45,7 @@ void setup() {
   // Begin screen mirroring serial output.
   Serial.begin(9600);
 
-  gameInit(&player, &game);
+  gameInit(&player, &game, spawns);
 
 }
 
@@ -58,7 +58,7 @@ void loop() {
   arduboy.clear();
 
   if(game.mode == 0){
-    play(&player, &game, ents);
+    play(&player, &game, ents, spawns);
   }
 
   if(game.mode == 1){
@@ -115,10 +115,11 @@ void title(Game *g){
 }
 
 
-void play(Entity *p, Game *g, Entity *ents){
+void play(Entity *p, Game *g, Entity *ents, Spawn s[]){
 
   int i = 0;
 
+  // Capture player controls
   if (arduboy.pressed(LEFT_BUTTON)){
     p->ax -= p->walkAccel; 
   }
@@ -135,22 +136,28 @@ void play(Entity *p, Game *g, Entity *ents){
     create(1, p->x, p->y - 10, ents); 
   }
 
+  // Update physics for all entities
   physicsUpdate(p);
   for(i = 0; i < ENT_MAX; i++){
     physicsUpdate(&ents[i]);
   }
-  
-  camera(&player, &game);
-  drawLevel(0, 0, &game);
 
+  // Update Camera
+  camera(&player, &game);
+
+  // Draw everything:
+  drawLevel(0, 0, &game);
   playerAnimation(p, g);
   drawSprite(g, p);
-  
+
   for(i = 0; i < ENT_MAX; i++){
     enemyAnimation(&ents[i], g);
     drawSprite(g, &ents[i]);
   }
 
+
+  // Handle Spawning and Despawning:
+  readSpawns(g->camerax, 0, s, ents);
   for(i = 0; i < ENT_MAX; i++){
     recycle(&ents[i], &game);
   }
@@ -162,10 +169,13 @@ void play(Entity *p, Game *g, Entity *ents){
 }
 
 
-void gameInit(Entity *p, Game *g){
+void gameInit(Entity *p, Game *g, Spawn s[]){
 
   p->x = 20;
   p->y = 0;
+
+  // Fill up spawns (Move this to a level init function
+  fillSpawns(s);
 
   // Start on title screen.
   g->mode = 1;
@@ -207,6 +217,9 @@ void debug(Entity *p, Game *g, Entity e[]){
     tinyfont.setCursor(i * 8, 20);
     tinyfont.print(e[i].alive);
   }
+
+  tinyfont.setCursor(1, 25);
+  tinyfont.print("Spawns!");
 }
 
 

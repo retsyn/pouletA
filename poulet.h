@@ -65,7 +65,22 @@ struct Entity {
 };
 
 
-
+// Spawn Data:
+const unsigned int spawndata[] PROGMEM = {
+  1, 20, 20,  // cats
+  1, 30, 10,
+  1, 50, 5,
+  1, 80, 10,
+  1, 120, 20,  // cats
+  1, 130, 10,
+  1, 150, 5,
+  1, 180, 10,
+  1, 220, 20,  // cats
+  1, 230, 10,
+  1, 250, 5,
+  1, 280, 10
+  
+};
 
 // Some level data?
 const unsigned char maparray[] PROGMEM = {

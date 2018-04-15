@@ -7,6 +7,7 @@
 
 #include "poulet.h"
 #include "tilemap.h"
+#include "entity.h"
 
 void drawLevel(int x, int y, Game *game){
   
@@ -47,6 +48,29 @@ int isSolid(int x, int y){
     return 0;
   }
   // x and y converting to tiles.
+}
+
+
+void fillSpawns(struct Spawn s[]){
+  // read spawn progmem and populate the spawns list.
+  // Might be possible to skip the spawn buffer altogether to save more dynamic memory...
+
+  int i = 0;
+  int kind = 0;
+  int x = 0;
+  int y = 0;
+ 
+  // Move by threes in the outer loop, as each entry is 3 bytes.
+
+  // This loop is presently eternal and puts the machine in an infinite loop.
+  
+  for(i = 0; i <= 30; i = i + 3){
+      kind = pgm_read_byte(spawndata + i);
+      x = pgm_read_byte(spawndata + i + 1);
+      y = pgm_read_byte(spawndata + i + 2);
+      makeSpawn(x, y, kind, s);
+  }
+
 }
 
 

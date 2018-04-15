@@ -11,5 +11,6 @@
 
 void drawLevel(int x, int y, Game *game);
 int isSolid(int x, int y);
+void fillSpawns(struct Spawn s[]);
 
 #endif

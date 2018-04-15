@@ -22,6 +22,7 @@ void create(int type, float x, float y, struct Entity e[]){
       break;
     }
   }
+  
   // If we can't fit that new enemy on screen, we return and just don't bother.
   if(i >= ENT_MAX) return;
 
@@ -33,7 +34,6 @@ void create(int type, float x, float y, struct Entity e[]){
   e[newIndex].y = y;
   e[newIndex].frame = 0;
   
-
   // Catch default case:
   e[newIndex].image = cat;
   
@@ -75,8 +75,8 @@ void readSpawns(int x, int y, struct Spawn s[], struct Entity e[]){
   int i = 0;
 
   for(i = 0; i < SPAWN_MAX; i++){
-    // If the spawn list says it's not on-screen, then have it created.
-    if(s[i].x > x && s[i].x < x + 128 && s[i].onscreen == 0){
+    // If the spawn list says it's now already onscreen, then have it created.
+    if((s[i].x > x) && (s[i].x < x + 128) && (s[i].onscreen == 0)){
       create(s[i].kind, s[i].x, s[i].y, e);
       s[i].onscreen = 1;
     }
@@ -84,10 +84,18 @@ void readSpawns(int x, int y, struct Spawn s[], struct Entity e[]){
 }
 
 
-void makeSpawn(int x, int y, struct Spawn s[]){
+void makeSpawn(int x, int y, int kind, struct Spawn s[]){
 
   int i = 0;
+  // Append to the end of the spawn list.
 
-  // Append to the end of the spawn list
+  // Walk through s and find the first empty one.
+  for (i = 0; i++; i <= SPAWN_MAX){
+    if(s[i].kind == 0){
+      s[i].x = x;
+      s[i].y = y;
+      s[i].kind = kind;
+    }
+  } 
 }
 
