@@ -19,6 +19,7 @@ Tinyfont tinyfont = Tinyfont(arduboy.sBuffer, Arduboy2::width(), Arduboy2::heigh
 // Forward declaration of essential types:
 struct Entity;
 struct Game;
+struct Spawn;
 
 
 Entity player;
@@ -133,7 +134,7 @@ void play(Entity *p, Game *g, Entity *ents, Spawn s[]){
   if (arduboy.justPressed(A_BUTTON)){
     // YOU WIN!
     g->score += 10;
-    create(1, p->x, p->y - 10, ents); 
+    //create(1, p->x, p->y - 10, ents); 
   }
 
   // Update physics for all entities
@@ -151,10 +152,10 @@ void play(Entity *p, Game *g, Entity *ents, Spawn s[]){
   drawSprite(g, p);
 
   for(i = 0; i < ENT_MAX; i++){
+    if(ents[i].alive == false) i++;
     enemyAnimation(&ents[i], g);
     drawSprite(g, &ents[i]);
   }
-
 
   // Handle Spawning and Despawning:
   readSpawns(g->camerax, 0, s, ents);
@@ -169,17 +170,19 @@ void play(Entity *p, Game *g, Entity *ents, Spawn s[]){
 }
 
 
-void gameInit(Entity *p, Game *g, Spawn s[]){
+void gameInit(Entity *p, Game *g, Spawn *s){
 
   p->x = 20;
   p->y = 0;
 
-  // Fill up spawns (Move this to a level init function
-  fillSpawns(s);
-
   // Start on title screen.
   g->mode = 1;
-  
+
+
+  //void create(int type, float x, float y, struct Entity e[]);
+  create(1, 10, 10, ents);
+
+  makeSpawn(s);
 }
 
 

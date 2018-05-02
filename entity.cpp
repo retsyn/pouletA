@@ -71,8 +71,9 @@ void recycle(struct Entity *e, struct Game *g){
 
 
 // Read the spawn list
-void readSpawns(int x, int y, struct Spawn s[], struct Entity e[]){
+void readSpawns(int x, int y, struct Spawn *s, struct Entity *e){
   int i = 0;
+
 
   for(i = 0; i < SPAWN_MAX; i++){
     // If the spawn list says it's now already onscreen, then have it created.
@@ -84,18 +85,29 @@ void readSpawns(int x, int y, struct Spawn s[], struct Entity e[]){
 }
 
 
-void makeSpawn(int x, int y, int kind, struct Spawn s[]){
+
+void makeSpawn(struct Spawn *s){
 
   int i = 0;
-  // Append to the end of the spawn list.
+  int ii = 0;
+  int kind = 0;
+  int x = 0;
+  int y = 0;
 
-  // Walk through s and find the first empty one.
-  for (i = 0; i++; i <= SPAWN_MAX){
-    if(s[i].kind == 0){
-      s[i].x = x;
-      s[i].y = y;
-      s[i].kind = kind;
-    }
-  } 
+  // iterate by threes, because there are three data-points in each entry.  Kind, x, y.
+  for(i = 0; i < (sizeof(spawndata)); i += 3){
+    kind = pgm_read_byte(spawndata + i);
+    x = pgm_read_byte(spawndata + (i + 1));
+    y = pgm_read_byte(spawndata + (i + 2));
+        
+    // Walk through s and find the first empty one.
+    for (ii = 0; ii++; ii <= SPAWN_MAX){
+      if(s[ii].kind == 0){
+        s[ii].x = x;
+        s[ii].y = y;
+        s[ii].kind = kind;
+      }
+    } 
+  }
 }
 
